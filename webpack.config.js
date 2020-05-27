@@ -23,6 +23,16 @@ module.exports = {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist')
   },
+  resolve: {
+    // В этом поле указываться расширение ф-лов. 
+    // И при импортах можно не указывать занесенные сюда расширения
+    extensions: ['.js', '.png'],
+    // Алиасы для абсолютных путей к файлам проекта
+    alias: {
+      '@models': path.resolve(__dirname, 'src/models'),
+      '@': path.resolve(__dirname, 'src')
+    }
+  },
   plugins: [
     new HTMLWebpackPlugin({
       template: './index.html'
