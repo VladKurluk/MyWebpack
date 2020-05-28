@@ -33,6 +33,12 @@ module.exports = {
       '@': path.resolve(__dirname, 'src')
     }
   },
+  optimization: {
+    // Оптимизация при подключении одной JS библиотеки к нескольким файлам.
+    splitChunks: {
+      chunks: 'all'
+    }
+  },
   plugins: [
     new HTMLWebpackPlugin({
       template: './index.html'
