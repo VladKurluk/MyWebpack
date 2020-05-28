@@ -23,6 +23,9 @@ module.exports = {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist')
   },
+  devServer: {
+    port: 8005
+  },
   resolve: {
     // В этом поле указываться расширение ф-лов. 
     // И при импортах можно не указывать занесенные сюда расширения
