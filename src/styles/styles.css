@@ -23,5 +23,7 @@ h1 {
 }
 
 .code {
-    color: cornflowerblue
+    background-color: lightgreen;
+    border: 1px solid blueviolet;
+    color: fuchsia
 }
