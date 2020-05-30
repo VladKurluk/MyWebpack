@@ -2,9 +2,7 @@
 const path = require("path");
 // Установленные плагины
 const HTMLWebpackPlugin = require("html-webpack-plugin");
-const {
-    CleanWebpackPlugin
-} = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -28,6 +26,8 @@ const optimization = () => {
     return config;
 };
 
+const filename = (ext) => (devMode ? `[name].${ext}` : `[name].[hash].${ext}`);
+
 module.exports = {
     // Режим работы
     mode: "development",
@@ -42,7 +42,7 @@ module.exports = {
     // В [name] попадет ключи из объекта entry. Ф-лов будет ровно столько сколько ключей.
     // В [contenthash] уникальный хеш, который измениться при изменении содержимого ф-ла
     output: {
-        filename: "[name].[contenthash].js",
+        filename: filename("js"),
         path: path.resolve(__dirname, "dist"),
     },
     // Дев сервер
@@ -52,7 +52,7 @@ module.exports = {
     resolve: {
         // В этом поле указываться расширение ф-лов.
         // И при импортах можно не указывать занесенные сюда расширения
-        extensions: [".js", ".png"],
+        extensions: [".js", ".scss", ".png"],
         // Алиасы для абсолютных путей к файлам проекта
         alias: {
             "@models": path.resolve(__dirname, "src/models"),
@@ -70,20 +70,23 @@ module.exports = {
         new CleanWebpackPlugin(),
         new CopyWebpackPlugin({
             // Плагин для копирования статических ф-лов. Указываем откуда и куда нужно скопировать.
-            patterns: [{
-                from: path.resolve(__dirname, "src/favicon.ico"),
-                to: path.resolve(__dirname, "dist"),
-            }, ],
+            patterns: [
+                {
+                    from: path.resolve(__dirname, "src/favicon.ico"),
+                    to: path.resolve(__dirname, "dist"),
+                },
+            ],
         }),
         new MiniCssExtractPlugin({
-            filename: "[name].css",
+            filename: filename("css"),
         }),
     ],
     module: {
         // Лоадеры.
         // Нужно устанавливать для определенного типа фай-лов, по умолчанию Webpack понимает JS и JSON
         // Прописать расширение в поле test и имя лоадера в use
-        rules: [{
+        rules: [
+            {
                 test: /\.css$/,
                 use: [
                     /*'style-loader'*/
@@ -95,6 +98,20 @@ module.exports = {
                         },
                     },
                     "css-loader",
+                ],
+            },
+            {
+                test: /\.s(c|a)ss$/,
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            hmr: devMode,
+                            reloadAll: true,
+                        },
+                    },
+                    "css-loader",
+                    "sass-loader",
                 ],
             },
             {
