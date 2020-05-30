@@ -55,7 +55,7 @@ module.exports = {
     context: path.resolve(__dirname, "src"),
     // Входные точки
     entry: {
-        main: "./index.js",
+        main: ["@babel/polyfill", "./index.js"],
         analytics: "./analytics.js",
     },
     // Результат работы сборщика
@@ -106,6 +106,17 @@ module.exports = {
         // Нужно устанавливать для определенного типа фай-лов, по умолчанию Webpack понимает JS и JSON
         // Прописать расширение в поле test и имя лоадера в use
         rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: ["@babel/preset-env"],
+                        plugins: ["@babel/plugin-proposal-class-properties"],
+                    },
+                },
+            },
             {
                 test: /\.css$/,
                 use: cssLoaders(),
