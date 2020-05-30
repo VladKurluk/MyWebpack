@@ -20,6 +20,7 @@ const optimization = () => {
     };
 
     if (prodMode) {
+        // Минификация CSS и JS для продакшена
         config.minimizer = [new OptimizeCssAssetsPlugin(), new TerserPlugin()];
     }
 
@@ -27,6 +28,25 @@ const optimization = () => {
 };
 
 const filename = (ext) => (devMode ? `[name].${ext}` : `[name].[hash].${ext}`);
+
+const cssLoaders = (extra) => {
+    const loaders = [
+        {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+                hmr: devMode,
+                reloadAll: true,
+            },
+        },
+        "css-loader",
+    ];
+
+    if (extra) {
+        loaders.push(extra);
+    }
+
+    return loaders;
+};
 
 module.exports = {
     // Режим работы
@@ -88,31 +108,11 @@ module.exports = {
         rules: [
             {
                 test: /\.css$/,
-                use: [
-                    /*'style-loader'*/
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: devMode,
-                            reloadAll: true,
-                        },
-                    },
-                    "css-loader",
-                ],
+                use: cssLoaders(),
             },
             {
                 test: /\.s(c|a)ss$/,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: devMode,
-                            reloadAll: true,
-                        },
-                    },
-                    "css-loader",
-                    "sass-loader",
-                ],
+                use: cssLoaders("sass-loader"),
             },
             {
                 test: /\.(png|jpg|svg|gif)$/,
