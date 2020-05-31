@@ -2,11 +2,14 @@
 const path = require("path");
 // Установленные плагины
 const HTMLWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const {
+    CleanWebpackPlugin
+} = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const WebpackBundleAnalayzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const devMode = process.env.NODE_ENV === "development";
 const prodMode = process.env.NODE_ENV === "production";
@@ -30,8 +33,7 @@ const optimization = () => {
 const filename = (ext) => (devMode ? `[name].${ext}` : `[name].[hash].${ext}`);
 
 const cssLoaders = (extra) => {
-    const loaders = [
-        {
+    const loaders = [{
             loader: MiniCssExtractPlugin.loader,
             options: {
                 hmr: devMode,
@@ -49,15 +51,13 @@ const cssLoaders = (extra) => {
 };
 
 const jsLoaders = () => {
-    const loaders = [
-        {
-            loader: "babel-loader",
-            options: {
-                presets: ["@babel/preset-env"],
-                plugins: ["@babel/plugin-proposal-class-properties"],
-            },
+    const loaders = [{
+        loader: "babel-loader",
+        options: {
+            presets: ["@babel/preset-env"],
+            plugins: ["@babel/plugin-proposal-class-properties"],
         },
-    ];
+    }, ];
 
     if (devMode) {
         loaders.push('eslint-loader')
@@ -65,6 +65,35 @@ const jsLoaders = () => {
 
     return loaders;
 };
+
+
+const plugins = () => {
+    const basePlugins = [
+        new HTMLWebpackPlugin({
+            template: "./index.html",
+            minify: {
+                collapseWhitespace: prodMode,
+            },
+        }),
+        new CleanWebpackPlugin(),
+        new CopyWebpackPlugin({
+            // Плагин для копирования статических ф-лов. Указываем откуда и куда нужно скопировать.
+            patterns: [{
+                from: path.resolve(__dirname, "src/favicon.ico"),
+                to: path.resolve(__dirname, "dist"),
+            }, ],
+        }),
+        new MiniCssExtractPlugin({
+            filename: filename("css"),
+        }),
+    ]
+
+    if (prodMode) {
+        basePlugins.push(new WebpackBundleAnalayzer())
+    }
+
+    return basePlugins
+}
 
 module.exports = {
     // Режим работы
@@ -99,33 +128,12 @@ module.exports = {
         },
     },
     optimization: optimization(),
-    plugins: [
-        new HTMLWebpackPlugin({
-            template: "./index.html",
-            minify: {
-                collapseWhitespace: prodMode,
-            },
-        }),
-        new CleanWebpackPlugin(),
-        new CopyWebpackPlugin({
-            // Плагин для копирования статических ф-лов. Указываем откуда и куда нужно скопировать.
-            patterns: [
-                {
-                    from: path.resolve(__dirname, "src/favicon.ico"),
-                    to: path.resolve(__dirname, "dist"),
-                },
-            ],
-        }),
-        new MiniCssExtractPlugin({
-            filename: filename("css"),
-        }),
-    ],
+    plugins: plugins(),
     module: {
         // Лоадеры.
         // Нужно устанавливать для определенного типа фай-лов, по умолчанию Webpack понимает JS и JSON
         // Прописать расширение в поле test и имя лоадера в use
-        rules: [
-            {
+        rules: [{
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: jsLoaders(),
