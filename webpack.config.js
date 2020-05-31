@@ -1,6 +1,6 @@
-// Встроенные плагины
+// Встроенные плагины и утилиты Node.js
 const path = require("path");
-// Установленные плагины
+// Установленные плагины для Webpack
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 const {
     CleanWebpackPlugin
@@ -11,6 +11,7 @@ const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const WebpackBundleAnalayzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+// Переменные для динамического поведения конфига в зависимости от режима работы сборки
 const devMode = process.env.NODE_ENV === "development";
 const prodMode = process.env.NODE_ENV === "production";
 
@@ -66,7 +67,6 @@ const jsLoaders = () => {
     return loaders;
 };
 
-
 const plugins = () => {
     const basePlugins = [
         new HTMLWebpackPlugin({
@@ -120,7 +120,7 @@ module.exports = {
     resolve: {
         // В этом поле указываться расширение ф-лов.
         // И при импортах можно не указывать занесенные сюда расширения
-        extensions: [".js", ".scss", ".png"],
+        extensions: [".js", ".css", ".scss", ".png"],
         // Алиасы для абсолютных путей к файлам проекта
         alias: {
             "@models": path.resolve(__dirname, "src/models"),
@@ -153,11 +153,7 @@ module.exports = {
             {
                 test: /\.(ttf|woff|woff2|eot)$/,
                 use: ["file-loader"],
-            },
-            {
-                test: /\.xml$/,
-                use: ["xml-loader"],
-            },
+            }
         ],
     },
 };
