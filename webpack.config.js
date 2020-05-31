@@ -2,14 +2,13 @@
 const path = require("path");
 // Установленные плагины для Webpack
 const HTMLWebpackPlugin = require("html-webpack-plugin");
-const {
-    CleanWebpackPlugin
-} = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const WebpackBundleAnalayzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const WebpackBundleAnalayzer = require("webpack-bundle-analyzer")
+    .BundleAnalyzerPlugin;
 
 // Переменные для динамического поведения конфига в зависимости от режима работы сборки
 const devMode = process.env.NODE_ENV === "development";
@@ -31,14 +30,18 @@ const optimization = () => {
     return config;
 };
 
+// В [name] попадет ключи из объекта entry. Ф-лов будет ровно столько сколько ключей.
+// В [contenthash] уникальный хеш, который измениться при изменении содержимого ф-ла
 const filename = (ext) => (devMode ? `[name].${ext}` : `[name].[hash].${ext}`);
 
 const cssLoaders = (extra) => {
-    const loaders = [{
+    const loaders = [
+        {
             loader: MiniCssExtractPlugin.loader,
             options: {
                 hmr: devMode,
                 reloadAll: true,
+                sourceMap: true,
             },
         },
         "css-loader",
@@ -46,22 +49,43 @@ const cssLoaders = (extra) => {
 
     if (extra) {
         loaders.push(extra);
+        loaders.push({
+            loader: "postcss-loader",
+            options: {
+                sourceMap: true,
+                config: {
+                    path: path.resolve(__dirname, "./postcss.config.js"),
+                }
+            },
+        });
+    } else {
+        loaders.push({
+            loader: "postcss-loader",
+            options: {
+                sourceMap: true,
+                config: {
+                    path: path.resolve(__dirname, "./postcss.config.js"),
+                }
+            },
+        });
     }
 
     return loaders;
 };
 
 const jsLoaders = () => {
-    const loaders = [{
-        loader: "babel-loader",
-        options: {
-            presets: ["@babel/preset-env"],
-            plugins: ["@babel/plugin-proposal-class-properties"],
+    const loaders = [
+        {
+            loader: "babel-loader",
+            options: {
+                presets: ["@babel/preset-env"],
+                plugins: ["@babel/plugin-proposal-class-properties"],
+            },
         },
-    }, ];
+    ];
 
     if (devMode) {
-        loaders.push('eslint-loader')
+        loaders.push("eslint-loader");
     }
 
     return loaders;
@@ -78,26 +102,26 @@ const plugins = () => {
         new CleanWebpackPlugin(),
         new CopyWebpackPlugin({
             // Плагин для копирования статических ф-лов. Указываем откуда и куда нужно скопировать.
-            patterns: [{
-                from: path.resolve(__dirname, "src/favicon.ico"),
-                to: path.resolve(__dirname, "dist"),
-            }, ],
+            patterns: [
+                {
+                    from: path.resolve(__dirname, "src/favicon.ico"),
+                    to: path.resolve(__dirname, "dist"),
+                },
+            ],
         }),
         new MiniCssExtractPlugin({
             filename: filename("css"),
         }),
-    ]
+    ];
 
     if (prodMode) {
-        basePlugins.push(new WebpackBundleAnalayzer())
+        basePlugins.push(new WebpackBundleAnalayzer());
     }
 
-    return basePlugins
-}
+    return basePlugins;
+};
 
 module.exports = {
-    // Режим работы
-    mode: "development",
     // В поле context храниться абсолютный путь к папке с исходниками проекта
     context: path.resolve(__dirname, "src"),
     // Входные точки
@@ -105,16 +129,15 @@ module.exports = {
         main: ["@babel/polyfill", "./index.js"],
         analytics: "./analytics.js",
     },
-    // Результат работы сборщика
-    // В [name] попадет ключи из объекта entry. Ф-лов будет ровно столько сколько ключей.
-    // В [contenthash] уникальный хеш, который измениться при изменении содержимого ф-ла
+    // Результат работы сборщика. Выходная точка
     output: {
         filename: filename("js"),
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve(__dirname, "./dist"),
     },
     // Дев сервер
     devServer: {
         port: 8005,
+        overlay: true,
     },
     devtool: devMode ? "source-map" : "",
     resolve: {
@@ -133,7 +156,8 @@ module.exports = {
         // Лоадеры.
         // Нужно устанавливать для определенного типа фай-лов, по умолчанию Webpack понимает JS и JSON
         // Прописать расширение в поле test и имя лоадера в use
-        rules: [{
+        rules: [
+            {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: jsLoaders(),
@@ -153,7 +177,7 @@ module.exports = {
             {
                 test: /\.(ttf|woff|woff2|eot)$/,
                 use: ["file-loader"],
-            }
+            },
         ],
     },
 };
