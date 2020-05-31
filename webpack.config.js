@@ -48,6 +48,24 @@ const cssLoaders = (extra) => {
     return loaders;
 };
 
+const jsLoaders = () => {
+    const loaders = [
+        {
+            loader: "babel-loader",
+            options: {
+                presets: ["@babel/preset-env"],
+                plugins: ["@babel/plugin-proposal-class-properties"],
+            },
+        },
+    ];
+
+    if (devMode) {
+        loaders.push('eslint-loader')
+    }
+
+    return loaders;
+};
+
 module.exports = {
     // Режим работы
     mode: "development",
@@ -69,6 +87,7 @@ module.exports = {
     devServer: {
         port: 8005,
     },
+    devtool: devMode ? "source-map" : "",
     resolve: {
         // В этом поле указываться расширение ф-лов.
         // И при импортах можно не указывать занесенные сюда расширения
@@ -109,13 +128,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                loader: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ["@babel/preset-env"],
-                        plugins: ["@babel/plugin-proposal-class-properties"],
-                    },
-                },
+                use: jsLoaders(),
             },
             {
                 test: /\.css$/,
