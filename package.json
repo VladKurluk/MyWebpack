@@ -4,13 +4,16 @@
     "description": "Webpack Starter",
     "main": "index.js",
     "scripts": {
-        "dev": "cross-env NODE_ENV=development webpack --mode development",
-        "build": "cross-env NODE_ENV=production webpack --mode production",
+        "dev": "cross-env NODE_ENV=development webpack-dev-server --open --config webpack.dev.config.js",
+        "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js",
         "watch": "cross-env NODE_ENV=development webpack --mode development --watch",
-        "start": "cross-env NODE_ENV=development webpack-dev-server --open --mode development",
         "analyze": "webpack --json > statisticbundles.json && webpack-bundle-analyzer statisticbundles.json"
     },
-    "browserslist": ["> 0.2%", "not dead", "last 3 version"],
+    "browserslist": [
+        "> 0.2%",
+        "not dead",
+        "last 3 version"
+    ],
     "keywords": [
         "Webpack4",
         "JS"
@@ -43,7 +46,8 @@
         "webpack": "^4.43.0",
         "webpack-bundle-analyzer": "^3.8.0",
         "webpack-cli": "^3.3.11",
-        "webpack-dev-server": "^3.11.0"
+        "webpack-dev-server": "^3.11.0",
+        "webpack-merge": "^4.2.2"
     },
     "dependencies": {
         "@babel/polyfill": "^7.10.1",

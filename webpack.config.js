@@ -36,6 +36,7 @@ const filename = (ext) => (devMode ? `[name].${ext}` : `[name].[hash].${ext}`);
 
 const cssLoaders = (extra) => {
     const loaders = [
+        "style-loader",
         {
             loader: MiniCssExtractPlugin.loader,
             options: {
@@ -44,18 +45,28 @@ const cssLoaders = (extra) => {
                 sourceMap: true,
             },
         },
-        "css-loader",
+        {
+            loader: "css-loader",
+            options: {
+                sourceMap: true,
+            },
+        },
     ];
 
     if (extra) {
-        loaders.push(extra);
         loaders.push({
             loader: "postcss-loader",
             options: {
                 sourceMap: true,
                 config: {
                     path: path.resolve(__dirname, "./postcss.config.js"),
-                }
+                },
+            },
+        });
+        loaders.push({
+            loader: extra,
+            options: {
+                sourceMap: true,
             },
         });
     } else {
@@ -65,7 +76,7 @@ const cssLoaders = (extra) => {
                 sourceMap: true,
                 config: {
                     path: path.resolve(__dirname, "./postcss.config.js"),
-                }
+                },
             },
         });
     }
@@ -134,12 +145,6 @@ module.exports = {
         filename: filename("js"),
         path: path.resolve(__dirname, "./dist"),
     },
-    // Дев сервер
-    devServer: {
-        port: 8005,
-        overlay: true,
-    },
-    devtool: devMode ? "source-map" : "",
     resolve: {
         // В этом поле указываться расширение ф-лов.
         // И при импортах можно не указывать занесенные сюда расширения
@@ -167,6 +172,7 @@ module.exports = {
                 use: cssLoaders(),
             },
             {
+                // scss
                 test: /\.s(c|a)ss$/,
                 use: cssLoaders("sass-loader"),
             },
