@@ -1,4 +1,4 @@
-$border: 1px solid green;
+@import './settings/variables';
 
 .box {
     padding: 1rem;
@@ -7,9 +7,7 @@ $border: 1px solid green;
     border: $border;
     background-color: gray;
     display: flex;
-
-    h2 {
-        text-align: center;
-        color: blueviolet;
-    }
+    justify-content: center;
 }
+
+@import './title';
