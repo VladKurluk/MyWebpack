@@ -15,7 +15,7 @@ h1 {
 }
 
 .logo {
-    background-image: url('../assets/img/webpack-logo.png');
+    background-image: url('/static/img/webpack-logo.png');
     background-size: cover;
     height: 200px;
     width: 200px;

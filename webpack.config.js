@@ -2,7 +2,9 @@
 const path = require("path");
 // Установленные плагины для Webpack
 const HTMLWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const {
+    CleanWebpackPlugin
+} = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -13,6 +15,13 @@ const WebpackBundleAnalayzer = require("webpack-bundle-analyzer")
 // Переменные для динамического поведения конфига в зависимости от режима работы сборки
 const devMode = process.env.NODE_ENV === "development";
 const prodMode = process.env.NODE_ENV === "production";
+
+// Глобальная переменная с путями до папок
+const PATHS = {
+    src: path.join(__dirname, './src'),
+    dist: path.join(__dirname, './dist'),
+    static: 'static/'
+}
 
 const optimization = () => {
     const config = {
@@ -30,9 +39,12 @@ const optimization = () => {
     return config;
 };
 
-// В [name] попадет ключи из объекта entry. Ф-лов будет ровно столько сколько ключей.
-// В [contenthash] уникальный хеш, который измениться при изменении содержимого ф-ла
-const filename = (ext) => (devMode ? `[name].${ext}` : `[name].[hash].${ext}`);
+/*
+ * Функция формирующая названия файлов (js, css) для разных режимов
+ * В [name] попадет ключи из объекта entry. Ф-лов будет ровно столько сколько ключей.
+ * В [contenthash] уникальный хеш, который измениться при изменении содержимого ф-ла
+ */
+const filename = (ext) => (devMode ? `[name].[contenthash].${ext}` : `${ext}/[name].[hash].${ext}`);
 
 const cssLoaders = (extra) => {
     const loaders = [
@@ -85,15 +97,13 @@ const cssLoaders = (extra) => {
 };
 
 const jsLoaders = () => {
-    const loaders = [
-        {
-            loader: "babel-loader",
-            options: {
-                presets: ["@babel/preset-env"],
-                plugins: ["@babel/plugin-proposal-class-properties"],
-            },
+    const loaders = [{
+        loader: "babel-loader",
+        options: {
+            presets: ["@babel/preset-env"],
+            plugins: ["@babel/plugin-proposal-class-properties"],
         },
-    ];
+    }, ];
 
     if (devMode) {
         loaders.push("eslint-loader");
@@ -113,12 +123,21 @@ const plugins = () => {
         new CleanWebpackPlugin(),
         new CopyWebpackPlugin({
             // Плагин для копирования статических ф-лов. Указываем откуда и куда нужно скопировать.
-            patterns: [
-                {
+            patterns: [{
                     from: path.resolve(__dirname, "src/favicon.ico"),
                     to: path.resolve(__dirname, "dist"),
                 },
-            ],
+                {
+                    // При подключении картинок путь нужно указывать '/assets/img/....'
+                    from: `${PATHS.src}/assets/img`,
+                    to: `${PATHS.static}img`,
+                },
+                {
+                    // При подключении шрифтов путь нужно указывать '/assets/fonts....'
+                    from: `${PATHS.src}/assets/fonts`,
+                    to: `${PATHS.static}fonts`,
+                },
+            ]
         }),
         new MiniCssExtractPlugin({
             filename: filename("css"),
@@ -132,9 +151,15 @@ const plugins = () => {
     return basePlugins;
 };
 
+
+
 module.exports = {
     // В поле context храниться абсолютный путь к папке с исходниками проекта
     context: path.resolve(__dirname, "src"),
+    // Через externals можно получить доступ к PATHS из других конфигов
+    externals: {
+        paths: PATHS
+    },
     // Входные точки
     entry: {
         main: ["@babel/polyfill", "./index.js"],
@@ -143,7 +168,8 @@ module.exports = {
     // Результат работы сборщика. Выходная точка
     output: {
         filename: filename("js"),
-        path: path.resolve(__dirname, "./dist"),
+        path: PATHS.dist,
+        publicPath: '/'
     },
     resolve: {
         // В этом поле указываться расширение ф-лов.
@@ -161,8 +187,7 @@ module.exports = {
         // Лоадеры.
         // Нужно устанавливать для определенного типа фай-лов, по умолчанию Webpack понимает JS и JSON
         // Прописать расширение в поле test и имя лоадера в use
-        rules: [
-            {
+        rules: [{
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: jsLoaders(),
@@ -177,7 +202,7 @@ module.exports = {
                 use: cssLoaders("sass-loader"),
             },
             {
-                test: /\.(png|jpg|svg|gif)$/,
+                test: /\.(png|jpg|svg|gif|webp)$/,
                 use: ["file-loader"],
             },
             {
