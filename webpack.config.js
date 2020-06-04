@@ -2,9 +2,7 @@
 const path = require("path");
 // Установленные плагины для Webpack
 const HTMLWebpackPlugin = require("html-webpack-plugin");
-const {
-    CleanWebpackPlugin
-} = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -18,10 +16,10 @@ const prodMode = process.env.NODE_ENV === "production";
 
 // Глобальная переменная с путями до папок
 const PATHS = {
-    src: path.join(__dirname, './src'),
-    dist: path.join(__dirname, './dist'),
-    static: 'static/'
-}
+    src: path.join(__dirname, "./src"),
+    dist: path.join(__dirname, "./dist"),
+    static: "static/",
+};
 
 const optimization = () => {
     const config = {
@@ -44,7 +42,8 @@ const optimization = () => {
  * В [name] попадет ключи из объекта entry. Ф-лов будет ровно столько сколько ключей.
  * В [contenthash] уникальный хеш, который измениться при изменении содержимого ф-ла
  */
-const filename = (ext) => (devMode ? `[name].[contenthash].${ext}` : `${ext}/[name].[hash].${ext}`);
+const filename = (ext) =>
+    devMode ? `[name].[contenthash].${ext}` : `${ext}/[name].[hash].${ext}`;
 
 const cssLoaders = (extra) => {
     const loaders = [
@@ -97,13 +96,15 @@ const cssLoaders = (extra) => {
 };
 
 const jsLoaders = () => {
-    const loaders = [{
-        loader: "babel-loader",
-        options: {
-            presets: ["@babel/preset-env"],
-            plugins: ["@babel/plugin-proposal-class-properties"],
+    const loaders = [
+        {
+            loader: "babel-loader",
+            options: {
+                presets: ["@babel/preset-env"],
+                plugins: ["@babel/plugin-proposal-class-properties"],
+            },
         },
-    }, ];
+    ];
 
     if (devMode) {
         loaders.push("eslint-loader");
@@ -111,6 +112,49 @@ const jsLoaders = () => {
 
     return loaders;
 };
+
+const imageLoaders = () => {
+    const loaders = [
+        {
+            loader: "file-loader",
+            options: {
+                name: `${PATHS.static}img/[name].[ext]`,
+            },
+        }
+    ]
+
+    if (prodMode) {
+        //Оптимизация картинок для продакшена 
+        loaders.push(
+            {
+                loader: "image-webpack-loader",
+                options: {
+                    mozjpeg: {
+                        progressive: true,
+                        quality: 65,
+                    },
+                    // optipng.enabled: false will disable optipng
+                    optipng: {
+                        enabled: false,
+                    },
+                    pngquant: {
+                        quality: [0.65, 0.9],
+                        speed: 4,
+                    },
+                    gifsicle: {
+                        interlaced: false,
+                    },
+                    // the webp option will enable WEBP
+                    webp: {
+                        quality: 75,
+                    },
+                },
+            }
+        )
+    }
+
+    return loaders
+}
 
 const plugins = () => {
     const basePlugins = [
@@ -123,21 +167,22 @@ const plugins = () => {
         new CleanWebpackPlugin(),
         new CopyWebpackPlugin({
             // Плагин для копирования статических ф-лов. Указываем откуда и куда нужно скопировать.
-            patterns: [{
+            patterns: [
+                {
                     from: path.resolve(__dirname, "src/favicon.ico"),
                     to: path.resolve(__dirname, "dist"),
                 },
-                {
+                /* {
                     // При подключении картинок путь нужно указывать '/assets/img/....'
                     from: `${PATHS.src}/assets/img`,
                     to: `${PATHS.static}img`,
-                },
+                }, */
                 {
                     // При подключении шрифтов путь нужно указывать '/assets/fonts....'
                     from: `${PATHS.src}/assets/fonts`,
                     to: `${PATHS.static}fonts`,
                 },
-            ]
+            ],
         }),
         new MiniCssExtractPlugin({
             filename: filename("css"),
@@ -151,14 +196,12 @@ const plugins = () => {
     return basePlugins;
 };
 
-
-
 module.exports = {
     // В поле context храниться абсолютный путь к папке с исходниками проекта
     context: path.resolve(__dirname, "src"),
     // Через externals можно получить доступ к PATHS из других конфигов
     externals: {
-        paths: PATHS
+        paths: PATHS,
     },
     // Входные точки
     entry: {
@@ -169,7 +212,7 @@ module.exports = {
     output: {
         filename: filename("js"),
         path: PATHS.dist,
-        publicPath: '/'
+        publicPath: "/",
     },
     resolve: {
         // В этом поле указываться расширение ф-лов.
@@ -187,7 +230,8 @@ module.exports = {
         // Лоадеры.
         // Нужно устанавливать для определенного типа фай-лов, по умолчанию Webpack понимает JS и JSON
         // Прописать расширение в поле test и имя лоадера в use
-        rules: [{
+        rules: [
+            {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: jsLoaders(),
@@ -203,7 +247,7 @@ module.exports = {
             },
             {
                 test: /\.(png|jpg|svg|gif|webp)$/,
-                use: ["file-loader"],
+                use: imageLoaders()
             },
             {
                 test: /\.(ttf|woff|woff2|eot)$/,
