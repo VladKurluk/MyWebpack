@@ -4,6 +4,10 @@ import "@/scss/index";
 import Post from "@/js/models/Post";
 import WebpackLogo from "@/assets/img/webpack-logo.png";
 import '@/js/forbabel'
+import Vue from 'vue'
+import App from '@/components/App.vue'
+import count from '@/components/Counter'
+
 
 const post = new Post("Webpack Start", WebpackLogo);
 // $("pre").addClass("code").html(post.toString());
@@ -13,3 +17,14 @@ console.log("Post to string", post.toString());
 
 let add = (a, b) => a + b
 console.log(add(2, 3))
+
+
+new Vue({
+    el: '#app',
+    components: {
+        App,
+        count
+    },
+    // render: h => h(App)
+})
+// .$mount('#app')

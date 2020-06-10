@@ -2,13 +2,17 @@
 const path = require("path");
 // Установленные плагины для Webpack
 const HTMLWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const {
+    CleanWebpackPlugin
+} = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const WebpackBundleAnalayzer = require("webpack-bundle-analyzer")
-    .BundleAnalyzerPlugin;
+const WebpackBundleAnalayzer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const {
+    VueLoaderPlugin
+} = require('vue-loader')
 
 // Переменные для динамического поведения конфига в зависимости от режима работы сборки
 const devMode = process.env.NODE_ENV === "development";
@@ -96,15 +100,13 @@ const cssLoaders = (extra) => {
 };
 
 const jsLoaders = () => {
-    const loaders = [
-        {
-            loader: "babel-loader",
-            options: {
-                presets: ["@babel/preset-env"],
-                plugins: ["@babel/plugin-proposal-class-properties"],
-            },
+    const loaders = [{
+        loader: "babel-loader",
+        options: {
+            presets: ["@babel/preset-env"],
+            plugins: ["@babel/plugin-proposal-class-properties"],
         },
-    ];
+    }, ];
 
     if (devMode) {
         loaders.push("eslint-loader");
@@ -114,43 +116,39 @@ const jsLoaders = () => {
 };
 
 const imageLoaders = () => {
-    const loaders = [
-        {
-            loader: "file-loader",
-            options: {
-                name: `${PATHS.static}img/[name].[ext]`,
-            },
-        }
-    ]
+    const loaders = [{
+        loader: "file-loader",
+        options: {
+            name: `${PATHS.static}img/[name].[ext]`,
+        },
+    }]
 
     if (prodMode) {
         //Оптимизация картинок для продакшена 
-        loaders.push(
-            {
-                loader: "image-webpack-loader",
-                options: {
-                    mozjpeg: {
-                        progressive: true,
-                        quality: 65,
-                    },
-                    // optipng.enabled: false will disable optipng
-                    optipng: {
-                        enabled: false,
-                    },
-                    pngquant: {
-                        quality: [0.65, 0.9],
-                        speed: 4,
-                    },
-                    gifsicle: {
-                        interlaced: false,
-                    },
-                    // the webp option will enable WEBP
-                    webp: {
-                        quality: 75,
-                    },
+        loaders.push({
+            loader: "image-webpack-loader",
+            options: {
+                mozjpeg: {
+                    progressive: true,
+                    quality: 65,
                 },
-            }
-        )
+                // optipng.enabled: false will disable optipng
+                optipng: {
+                    enabled: false,
+                },
+                pngquant: {
+                    quality: [0.65, 0.9],
+                    speed: 4,
+                },
+                gifsicle: {
+                    interlaced: false,
+                },
+                // the webp option will enable WEBP
+                webp: {
+                    quality: 75,
+                },
+            },
+        })
     }
 
     return loaders
@@ -167,8 +165,7 @@ const plugins = () => {
         new CleanWebpackPlugin(),
         new CopyWebpackPlugin({
             // Плагин для копирования статических ф-лов. Указываем откуда и куда нужно скопировать.
-            patterns: [
-                {
+            patterns: [{
                     from: path.resolve(__dirname, "src/favicon.ico"),
                     to: path.resolve(__dirname, "dist"),
                 },
@@ -187,6 +184,7 @@ const plugins = () => {
         new MiniCssExtractPlugin({
             filename: filename("css"),
         }),
+        new VueLoaderPlugin()
     ];
 
     if (prodMode) {
@@ -212,16 +210,21 @@ module.exports = {
     output: {
         filename: filename("js"),
         path: PATHS.dist,
-        publicPath: "/",
+        publicPath: "",
     },
     resolve: {
         // В этом поле указываться расширение ф-лов.
         // И при импортах можно не указывать занесенные сюда расширения
-        extensions: [".js", ".css", ".scss", ".png"],
+        extensions: [".js", ".vue", ".css", ".scss", ".png"],
         // Алиасы для абсолютных путей к файлам проекта
         alias: {
             "@models": path.resolve(__dirname, "src/models"),
             "@": path.resolve(__dirname, "src"),
+            /* Этот алиас убрал ошибку 
+             * "[Vue warn]: You are using the runtime-only build of Vue where the template compiler is not available.
+             *  Either pre - compile the templates into render functions, or use the compiler - included build." 
+             */
+            'vue$': 'vue/dist/vue.esm.js'
         },
     },
     optimization: optimization(),
@@ -230,7 +233,17 @@ module.exports = {
         // Лоадеры.
         // Нужно устанавливать для определенного типа фай-лов, по умолчанию Webpack понимает JS и JSON
         // Прописать расширение в поле test и имя лоадера в use
-        rules: [
+        rules: [{
+                test: /\.vue$/,
+                use: [{
+                    loader: 'vue-loader',
+                    options: {
+                        loader: {
+                            scss: 'vue-style-loader!scss-loader!sass-loader'
+                        }
+                    }
+                }]
+            },
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
