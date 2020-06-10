@@ -5,6 +5,7 @@ import Post from "@/js/models/Post";
 import WebpackLogo from "@/assets/img/webpack-logo.png";
 import '@/js/forbabel'
 import Vue from 'vue'
+import store from '@/store/index'
 import App from '@/components/App.vue'
 import count from '@/components/Counter'
 
@@ -25,6 +26,7 @@ new Vue({
         App,
         count
     },
+    store
     // render: h => h(App)
 })
 // .$mount('#app')
