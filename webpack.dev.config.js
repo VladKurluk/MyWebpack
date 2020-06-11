@@ -5,8 +5,8 @@ const Webpack = require("webpack");
 const WebpackMerge = require("webpack-merge");
 // Ф-л с базовой конфигурацией Webpack
 const baseWebpackConfig = require("./webpack.config");
-//
 
+//
 module.exports = WebpackMerge(baseWebpackConfig, {
     mode: "development",
     // Дев сервер

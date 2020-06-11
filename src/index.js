@@ -1,5 +1,5 @@
-import "@/css/index";
-import "@/scss/index";
+import "@/assets/css/index";
+import "@/assets/scss/index";
 // import * as $ from "jquery";
 import Post from "@/js/models/Post";
 import WebpackLogo from "@/assets/img/webpack-logo.png";
