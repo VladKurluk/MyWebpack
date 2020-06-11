@@ -5,10 +5,7 @@ const HTMLWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
-const WebpackBundleAnalayzer = require("webpack-bundle-analyzer")
-    .BundleAnalyzerPlugin;
+
 
 // Переменные для динамического поведения конфига в зависимости от режима работы сборки
 const devMode = process.env.NODE_ENV === "development";
@@ -19,29 +16,6 @@ const PATHS = {
     src: path.join(__dirname, "./src"),
     dist: path.join(__dirname, "./dist"),
     static: "static/",
-};
-
-const optimization = () => {
-    const config = {
-        // Оптимизация при подключении одной JS библиотеки к нескольким файлам.
-        splitChunks: {
-            cacheGroups: {
-                vendor: {
-                    test: /node_modules/,
-                    name: 'vendors',
-                    chunks: "all",
-                    enforce: true
-                }
-            }
-        },
-    };
-
-    if (prodMode) {
-        // Минификация CSS и JS для продакшена
-        config.minimizer = [new OptimizeCssAssetsPlugin(), new TerserPlugin()];
-    }
-
-    return config;
 };
 
 /*
@@ -176,8 +150,8 @@ const plugins = () => {
             // Плагин для копирования статических ф-лов. Указываем откуда и куда нужно скопировать.
             patterns: [
                 {
-                    from: path.resolve(__dirname, "src/favicon.ico"),
-                    to: path.resolve(__dirname, "dist"),
+                    from: `${PATHS.src}/static/favicon.ico`,
+                    to: `${PATHS.dist}`,
                 },
                 /* {
                     // При подключении картинок путь нужно указывать '/static/img/....'
@@ -195,10 +169,6 @@ const plugins = () => {
             filename: filename("css"),
         }),
     ];
-
-    if (prodMode) {
-        basePlugins.push(new WebpackBundleAnalayzer());
-    }
 
     return basePlugins;
 };
@@ -231,7 +201,19 @@ module.exports = {
             "@": path.resolve(__dirname, "src"),
         },
     },
-    optimization: optimization(),
+    optimization: {
+        // Оптимизация при подключении одной JS библиотеки к нескольким файлам.
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: /node_modules/,
+                    name: 'vendors',
+                    chunks: "all",
+                    enforce: true
+                }
+            }
+        },
+    },
     plugins: plugins(),
     module: {
         // Лоадеры.
