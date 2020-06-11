@@ -29,7 +29,14 @@ const optimization = () => {
     const config = {
         // Оптимизация при подключении одной JS библиотеки к нескольким файлам.
         splitChunks: {
-            chunks: "all",
+            cacheGroups: {
+                vendor: {
+                    test: /node_modules/,
+                    name: 'vendors',
+                    chunks: "all",
+                    enforce: true
+                }
+            }
         },
     };
 
