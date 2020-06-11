@@ -2,11 +2,10 @@
 const path = require("path");
 // Установленные плагины для Webpack
 const HTMLWebpackPlugin = require("html-webpack-plugin");
-const {
-    CleanWebpackPlugin
-} = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { VueLoaderPlugin } = require('vue-loader')
 
 // Переменные для динамического поведения конфига в зависимости от режима работы сборки
 const devMode = process.env.NODE_ENV === "development";
