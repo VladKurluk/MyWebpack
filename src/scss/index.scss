@@ -1,4 +1,9 @@
 @import './settings/variables';
+@import './fonts';
+
+body {
+    font-family: 'Mark Pro';
+}
 
 .box {
     padding: 1rem;

@@ -180,12 +180,12 @@ const plugins = () => {
                     to: path.resolve(__dirname, "dist"),
                 },
                 /* {
-                    // При подключении картинок путь нужно указывать '/assets/img/....'
+                    // При подключении картинок путь нужно указывать '/static/img/....'
                     from: `${PATHS.src}/assets/img`,
                     to: `${PATHS.static}img`,
                 }, */
                 {
-                    // При подключении шрифтов путь нужно указывать '/assets/fonts....'
+                    // При подключении шрифтов путь нужно указывать '/static/fonts....'
                     from: `${PATHS.src}/assets/fonts`,
                     to: `${PATHS.static}fonts`,
                 },
