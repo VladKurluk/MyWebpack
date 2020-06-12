@@ -15,3 +15,10 @@ document.querySelector('pre').classList.add('code');
 
 const add = (a, b) => a + b;
 console.log(add(2, 3));
+console.log(window);
+
+function test() {
+    console.log('Test');
+}
+
+test();

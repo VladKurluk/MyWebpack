@@ -1,6 +1,6 @@
 // Ф-л с примером для демонстрации работы ES6+
 async function start() {
-  return Promise.resolve('async is working');
+    return Promise.resolve('async is working');
 }
 
 start().then(console.log);
