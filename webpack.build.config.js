@@ -9,18 +9,20 @@ const WebpackBundleAnalayzer = require("webpack-bundle-analyzer").BundleAnalyzer
 // Ф-л с базовой конфигурацией Webpack
 const baseWebpackConfig = require("./webpack.config");
 
-//
+// Настройки Webpack
 module.exports = WebpackMerge(baseWebpackConfig, {
     mode: "production",
     // Удаление сорс мапов в продпкшен сборке
     devtool: "",
     optimization: {
         minimizer: [
+            // Сжатие CSS и JS на продакшен
             new OptimizeCssAssetsPlugin(),
             new TerserPlugin()
         ]
     },
     plugins: [
+        // Анализ размера бандлов
         new WebpackBundleAnalayzer()
     ]
 });

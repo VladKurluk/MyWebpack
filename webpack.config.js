@@ -2,7 +2,9 @@
 const path = require("path");
 // Установленные плагины для Webpack
 const HTMLWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const {
+    CleanWebpackPlugin
+} = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { VueLoaderPlugin } = require('vue-loader')
@@ -92,66 +94,27 @@ const jsLoaders = () => {
     return loaders;
 };
 
-const imageLoaders = () => {
-    const loaders = [{
-        loader: "file-loader",
-        options: {
-            name: `${PATHS.static}img/[name].[ext]`,
-        },
-    }]
-
-    if (prodMode) {
-        //Оптимизация картинок для продакшена 
-        loaders.push({
-            loader: "image-webpack-loader",
-            options: {
-                mozjpeg: {
-                    progressive: true,
-                    quality: 65,
-                },
-                // optipng.enabled: false will disable optipng
-                optipng: {
-                    enabled: false,
-                },
-                pngquant: {
-                    quality: [0.65, 0.9],
-                    speed: 4,
-                },
-                gifsicle: {
-                    interlaced: false,
-                },
-                // the webp option will enable WEBP
-                webp: {
-                    quality: 75,
-                },
-            },
-        })
-    }
-
-    return loaders
-}
-
 const plugins = () => {
     const basePlugins = [
         new HTMLWebpackPlugin({
             template: "./index.html",
             minify: {
                 collapseWhitespace: prodMode,
+                removeComments: true,
             },
         }),
         new CleanWebpackPlugin(),
         new CopyWebpackPlugin({
             // Плагин для копирования статических ф-лов. Указываем откуда и куда нужно скопировать.
-            patterns: [
-                {
+            patterns: [{
                     from: `${PATHS.src}/static/favicon.ico`,
                     to: `${PATHS.dist}`,
                 },
-                /* {
+                {
                     // При подключении картинок путь нужно указывать '/static/img/....'
                     from: `${PATHS.src}/assets/img`,
-                    to: `${PATHS.static}img`,
-                }, */
+                    to: `${PATHS.static}img`
+                },
                 {
                     // При подключении шрифтов путь нужно указывать '/static/fonts....'
                     from: `${PATHS.src}/assets/fonts`,
@@ -244,10 +207,42 @@ module.exports = {
                 test: /\.s(c|a)ss$/,
                 use: cssLoaders("sass-loader"),
             },
-            {
+            /* {
+                // Обработка и сжатие картинок
+                // TODO: Пока не работает, нужно разобраться
                 test: /\.(png|jpg|svg|gif|webp)$/,
-                use: imageLoaders()
-            },
+                use: [{
+                        loader: "file-loader",
+                        options: {
+                            name: `${PATHS.static}img/[name].[ext]`
+                        },
+                    },
+                    {
+                        loader: "image-webpack-loader",
+                        options: {
+                            mozjpeg: {
+                                progressive: true,
+                                quality: 65,
+                            },
+                            // optipng.enabled: false will disable optipng
+                            optipng: {
+                                enabled: false,
+                            },
+                            pngquant: {
+                                quality: [0.65, 0.9],
+                                speed: 4,
+                            },
+                            gifsicle: {
+                                interlaced: false,
+                            },
+                            // the webp option will enable WEBP
+                            webp: {
+                                quality: 75,
+                            },
+                        },
+                    }
+                ]
+            }, */
             {
                 test: /\.(ttf|woff|woff2|eot)$/,
                 use: ["file-loader"],

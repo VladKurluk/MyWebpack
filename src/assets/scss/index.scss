@@ -1,5 +1,10 @@
-@import './settings/variables';
-@import './fonts';
+// Главный ф-л SCSS. Импортируеться в index.js
+
+@import './abstracts/_variables';
+@import './abstracts/mixins/_fonts-mixins';
+@import './base_settings/_fonts';
+
+
 
 body {
     font-family: 'Mark Pro';
@@ -15,9 +20,26 @@ body {
     justify-content: center;
 }
 
-@import './title';
+.box__title {
+    text-align: center;
+    color: lightgreen;
+}
+
+.text-center {
+    text-align: center;
+    font-weight: 600;
+    @include adaptiv-font(24, 14)
+}
+
 
 figure {
+    width: 200px;
+    height: 150px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     img {
         width: 100px;
         height: 100px;
