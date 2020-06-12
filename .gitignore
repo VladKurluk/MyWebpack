@@ -1,5 +1,13 @@
+# NPM packages folder.
 node_modules
-dist
+
+# Build files
+dist/
+
+# lock files
+yarn.lock
+package-lock.json
+
 .vscode
 
 statisticbundles.json
