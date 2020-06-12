@@ -22,7 +22,7 @@ body {
 
 .box__title {
     text-align: center;
-    color: lightgreen;
+    color: darkred;
 }
 
 .text-center {
@@ -40,6 +40,7 @@ figure {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     img {
         width: 100px;
         height: 100px;
