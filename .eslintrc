@@ -8,5 +8,8 @@
         "es6": true,
         "browser": true
     },
-    "extends": "eslint:recommended"
+    "extends": ["airbnb/base", "eslint:recommended"],
+    "settings": {
+        "import/resolver": "webpack"
+    }
 }

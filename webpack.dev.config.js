@@ -13,7 +13,7 @@ module.exports = WebpackMerge(baseWebpackConfig, {
     devServer: {
         port: 7700,
         overlay: {
-            warnings: true, // Показывать предупреждения в браузере
+            warnings: false, // Показывать предупреждения в браузере
             errors: true, // Показывать ошибки в браузере
         }
     },
