@@ -8,9 +8,10 @@ import "@/assets/scss/index";
 import Post from "@/js/models/Post";
 // Импорт ф-ла с кодом ES6
 import '@/js/forbabel'
+
+// Подключение Vue.js, Vuex, и компонентов
 import Vue from 'vue'
 import store from '@/store/index'
-import App from '@/components/App.vue'
 import count from '@/components/Counter'
 
 
@@ -22,14 +23,11 @@ document.querySelector('pre').classList.add('code')
 let add = (a, b) => a + b
 console.log(add(2, 3))
 
-
+// Инициализация Vue.js
 new Vue({
     el: '#app',
     components: {
-        App,
         count
     },
     store
-    // render: h => h(App)
 })
-// .$mount('#app')
