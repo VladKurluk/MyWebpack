@@ -1,0 +1,38 @@
+{
+    "parser": "babel-eslint",
+    "env": {
+        "es6": true,
+        "browser": true,
+        "node": true
+    },
+    "extends": ["airbnb/base", "eslint:recommended"],
+    "plugins": [
+        // "babel",
+        // "import",
+        "prettier"
+    ],
+    "settings": {
+        "import/resolver": "webpack"
+    },
+    "rules": {
+        // Точка с запятой в конце выражения
+        "semi": ["error", "always"],
+        // console.log()
+        "no-console": "off",
+        "no-plusplus": "off",
+        "max-len": [
+            "error", 150,
+            {
+                "ignoreComments": true
+            },
+            {
+                "ignoreUrls": true
+            }
+        ],
+        "no-tabs": "off",
+        "indent": ["error", 4],
+        "quotes": ["error", "single"],
+        "prettier/prettier": ["error"],
+        "no-unused-vars": "off"
+    }
+}

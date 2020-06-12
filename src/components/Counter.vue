@@ -9,13 +9,13 @@
 <script>
 export default {
     data: () => ({
-        count: 0
+        count: 0,
     })
 }
 </script>
 
 <style lang="scss" scoped>
 h1 {
-    color: goldenrod
+    color: goldenrod;
 }
 </style>
