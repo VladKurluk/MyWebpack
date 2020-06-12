@@ -1,0 +1,13 @@
+@mixin adaptiv-font($desctopFontSize, $mobileFontSize, $maxLayoutWidth: 1920) {
+    $addFontSize: $desctopFontSize - $mobileFontSize;
+    $maxWidth: $maxLayoutWidth - 320;
+    font-size: calc(#{$mobileFontSize + px} + #{$addFontSize} * ((100vw - 320px) / #{$maxWidth}));
+}
+
+@mixin section-title($ff: $font-family-content, $fontColor: $light-blue, $lh: 1.2, $fw: 300) {
+    font-family: $ff;
+    text-align: center;
+    color: $fontColor;
+    line-height: $lh;
+    font-weight: $fw;
+}

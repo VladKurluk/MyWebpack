@@ -1,3 +1,7 @@
+ /*
+  * Главный CSS ф-л. Подключаеться в index.js
+  */
+  
 .container {
     padding-top: 2em;
     max-width: 1000px;

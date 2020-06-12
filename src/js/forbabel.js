@@ -1,3 +1,4 @@
+// Ф-л с примером для демонстрации работы ES6+
 async function start() {
     return await Promise.resolve("async is working");
 }

@@ -6,15 +6,15 @@ const WebpackMerge = require("webpack-merge");
 // Ф-л с базовой конфигурацией Webpack
 const baseWebpackConfig = require("./webpack.config");
 
-//
+// Настройки Webpack
 module.exports = WebpackMerge(baseWebpackConfig, {
     mode: "development",
     // Дев сервер
     devServer: {
         port: 7700,
         overlay: {
-            warnings: true,
-            errors: true,
+            warnings: true, // Показывать предупреждения в браузере
+            errors: true, // Показывать ошибки в браузере
         }
     },
     // Сорс мапы для исходного кода
